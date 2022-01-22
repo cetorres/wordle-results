@@ -1,0 +1,34 @@
+.App {
+  width: 500px;
+  margin: auto;
+}
+
+h2 {
+  text-align: center;
+}
+
+.inner-container {
+  text-align: left;
+}
+
+.resultList {
+  margin-top: 40px;
+}
+
+input[type=text] {
+  text-transform: uppercase;
+}
+
+input, label {
+  display:block;
+}
+
+.submit {
+  margin-top: 20px;
+}
+
+pre {
+  font-family: 'Courier New', Courier, monospace;
+  line-height: 17px;
+  margin: 16px 16px 12px 12px;
+}
