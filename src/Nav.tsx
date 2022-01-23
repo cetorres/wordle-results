@@ -8,7 +8,10 @@ export default function Nav() {
     <header className="d-flex justify-content-center py-3">
       <nav className="navbar navbar-expand-md fixed-top navbar-dark bg-dark">
         <div className="container">
-          <Link className="navbar-brand" to="/">Wordle Results History</Link>
+          <Link className="navbar-brand" to="/">
+            <img src='wordle_results_logo_192x192.png' className='nav-image' width='40' height='40' />
+            Wordle Results History
+          </Link>
           <button className="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
             <span className="navbar-toggler-icon"></span>
           </button>
