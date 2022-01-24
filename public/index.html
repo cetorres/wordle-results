@@ -9,15 +9,15 @@
     <link rel="apple-touch-icon" href="%PUBLIC_URL%/wordle_results_logo_192x192.png" />
 
     <!-- FB Meta Tags -->
-    <meta property="og:url" content="https://wordle-results.netlify.app">
+    <meta property="og:url" content="https://wordle-results.web.app">
     <meta property="og:type" content="website">
     <meta property="og:title" content="Wordle Results">
     <meta property="og:description" content="A Wordle results app. You can now save your results history.">
-    <meta property="og:image" content="https://wordle-results.netlify.app/wordle_results_logo_192x192.png">
+    <meta property="og:image" content="https://wordle-results.web.app/wordle_results_logo_192x192.png">
 
     <!-- Twitter Meta Tags -->
     <meta name="twitter:card" content="summary_large_image">
-    <meta property="twitter:domain" content="wordle-results.netlify.app">
+    <meta property="twitter:domain" content="wordle-results.web.app">
 
     <!--
       manifest.json provides metadata used when your web app is installed on a
@@ -48,5 +48,28 @@
       To begin the development, run `npm start` or `yarn start`.
       To create a production bundle, use `npm run build` or `yarn build`.
     -->
+    <script type="module">
+      // Import the functions you need from the SDKs you need
+      import { initializeApp } from "https://www.gstatic.com/firebasejs/9.6.4/firebase-app.js";
+      import { getAnalytics } from "https://www.gstatic.com/firebasejs/9.6.4/firebase-analytics.js";
+      // TODO: Add SDKs for Firebase products that you want to use
+      // https://firebase.google.com/docs/web/setup#available-libraries
+    
+      // Your web app's Firebase configuration
+      // For Firebase JS SDK v7.20.0 and later, measurementId is optional
+      const firebaseConfig = {
+        apiKey: "AIzaSyCZ0q6p_X42o9Ir31ofIVMNHEZ5Au2op8I",
+        authDomain: "wordle-results.firebaseapp.com",
+        projectId: "wordle-results",
+        storageBucket: "wordle-results.appspot.com",
+        messagingSenderId: "620904499399",
+        appId: "1:620904499399:web:aded287c05c978340456e2",
+        measurementId: "G-KWMKRR82WS"
+      };
+    
+      // Initialize Firebase
+      const app = initializeApp(firebaseConfig);
+      const analytics = getAnalytics(app);
+    </script>
   </body>
 </html>
