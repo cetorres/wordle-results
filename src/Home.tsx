@@ -17,16 +17,17 @@ export default function Home() {
   const [errorMsg, setErrorMsg] = useState('');
   const [msgBodyElement, setMsgBodyElement] = useState<JSX.Element>();
   const refFileUpload = useRef<HTMLInputElement>(null);
+  const refDate = useRef<HTMLInputElement>(null);
   let modalNewResult: Modal;
 
   function openNewResult() {
+    setDefaultDate();
     modalNewResult = new Modal(document.getElementById('modalNewResult')!);
     modalNewResult.show();
   }
 
   function onSubmitNewResultForm(e: any) {
     e.preventDefault();
-
     setErrorMsg('');
 
     try {
@@ -57,8 +58,9 @@ export default function Home() {
     
       e.target.resultText.value = '';
       e.target.word.value = '';
-      e.target.date.value = null;
+      setDefaultDate();
 
+      setErrorMsg('');
       modalNewResult.hide();
     }
     catch (error: any) {
@@ -95,21 +97,6 @@ export default function Home() {
     reader.readAsText(fileObj);
   }
 
-  function handleDateTimeChange(e: any) {
-    // Fix for iOS for datetime-local input
-    // On iOS it gets a value like this: 2022-01-24T11:42:27.795
-    // On other systems, the value is like this: 2022-01-24T11:41
-    // The other systems value is the correct one, iOS has a bug.
-    // So the fix remove 7 chars from the end of the datetime string
-    // to make it valid.
-    const dateValue = e.target.value;
-    if (dateValue.length > 16) {
-      const fixedValueForMobile = dateValue.substr(0, dateValue.length - 7);
-      console.log('fixedValueForMobile', fixedValueForMobile);
-      e.target.value = fixedValueForMobile;
-    }
-  }
-
   function showModal(title: string, body?: string | null, bodyElement?: JSX.Element | null) {
     setMsgTitle(title);
     if (body) setMsgBody(body!); else setMsgBody('');
@@ -124,6 +111,13 @@ export default function Home() {
     navigator.clipboard.writeText(shareText);
     document.execCommand('copy', false, shareText);
     showModal('Share', null, <div>Result copied to the clipboard.<br/><br/><pre>{shareText}</pre></div>);
+  }
+
+  function setDefaultDate() {
+    const date = new Date();
+    const dateString = date.toISOString();
+    const dateStringFixed = dateString.split('T')[0];
+    if (refDate) refDate.current!.defaultValue = dateStringFixed;
   }
 
   useEffect(() => {
@@ -165,7 +159,7 @@ export default function Home() {
                   <td>{result.tries}</td>
                   <td><pre>{result.result}</pre></td>
                   <td>{result.word}</td>
-                  <td>{(new Date(result.date)).toLocaleString()}</td>
+                  <td>{(new Date(result.date)).toLocaleDateString()}</td>
                   <td>
                     <button className='btn btn-success btn-sm me-2 mb-2' title='Share' onClick={() => shareResult(result.number)}><i className="bi bi-share"></i></button>
                     <button className='btn btn-danger btn-sm mb-2' title='Delete' onClick={() => removeResult(result.number)}><i className="bi bi-x-lg"></i></button>
@@ -223,7 +217,7 @@ export default function Home() {
                   </div>
                   <div className="mb-3">
                     <label htmlFor="date" className='form-label'>Date</label>
-                    <input type='datetime-local' required={true} id='date' onChange={handleDateTimeChange} className='form-control' />
+                    <input type='date' ref={refDate} required={true} id='date' className='form-control' />
                   </div>
                 </div>
                 <div className="modal-footer">
