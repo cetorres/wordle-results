@@ -24,3 +24,11 @@ export function loadFromLocalStorage(key: string): any {
   const json = localStorage.getItem(key);
   return json ? JSON.parse(json) : '';
 }
+
+export function isIOS() {
+  return /iPhone|iPad|iPod/i.test(navigator.userAgent);
+}
+
+export function isAndroid() {
+  return /Android/i.test(navigator.userAgent);
+}

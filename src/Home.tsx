@@ -95,6 +95,21 @@ export default function Home() {
     reader.readAsText(fileObj);
   }
 
+  function handleDateTimeChange(e: any) {
+    // Fix for iOS for datetime-local input
+    // On iOS it gets a value like this: 2022-01-24T11:42:27.795
+    // On other systems, the value is like this: 2022-01-24T11:41
+    // The other systems value is the correct one, iOS has a bug.
+    // So the fix remove 7 chars from the end of the datetime string
+    // to make it valid.
+    const dateValue = e.target.value;
+    if (dateValue.length > 16) {
+      const fixedValueForMobile = dateValue.substr(0, dateValue.length - 7);
+      console.log('fixedValueForMobile', fixedValueForMobile);
+      e.target.value = fixedValueForMobile;
+    }
+  }
+
   function showModal(title: string, body?: string | null, bodyElement?: JSX.Element | null) {
     setMsgTitle(title);
     if (body) setMsgBody(body!); else setMsgBody('');
@@ -208,7 +223,7 @@ export default function Home() {
                   </div>
                   <div className="mb-3">
                     <label htmlFor="date" className='form-label'>Date</label>
-                    <input type='datetime-local' required={true} id='date' className='form-control' />
+                    <input type='datetime-local' required={true} id='date' onChange={handleDateTimeChange} className='form-control' />
                   </div>
                 </div>
                 <div className="modal-footer">
