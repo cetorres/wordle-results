@@ -68,9 +68,9 @@ export default function Home() {
     }
   }
 
-  function removeResult(number: number) {
+  function removeResult(resultToDelete: Result) {
     if (window.confirm('Confirm delete this result?')) {
-      const filteredResults = results.filter((result) => result.number !== number);
+      const filteredResults = results.filter((res) => res !== resultToDelete);
       setResults(filteredResults);
       saveToLocaStorage('results', filteredResults);
     }
@@ -105,8 +105,8 @@ export default function Home() {
     modalMessage.show();
   }
 
-  function shareResult(number: number) {
-    const result = results.filter((result) => result.number === number)[0];
+  function shareResult(resultToShare: Result) {
+    const result = results.filter((res) => res === resultToShare)[0];
     const shareText = `Wordle ${result.number} ${result.tries}\n\n${result.result}`;
     navigator.clipboard.writeText(shareText);
     document.execCommand('copy', false, shareText);
@@ -165,8 +165,8 @@ export default function Home() {
                   <td>{result.word}</td>
                   <td>{formatString(result.date)}</td>
                   <td>
-                    <button className='btn btn-success btn-sm me-2 mb-2' title='Share' onClick={() => shareResult(result.number)}><i className="bi bi-share"></i></button>
-                    <button className='btn btn-danger btn-sm mb-2' title='Delete' onClick={() => removeResult(result.number)}><i className="bi bi-x-lg"></i></button>
+                    <button className='btn btn-success btn-sm me-2 mb-2' title='Share' onClick={() => shareResult(result)}><i className="bi bi-share"></i></button>
+                    <button className='btn btn-danger btn-sm mb-2' title='Delete' onClick={() => removeResult(result)}><i className="bi bi-x-lg"></i></button>
                   </td>
                 </tr>)}
               </tbody>
