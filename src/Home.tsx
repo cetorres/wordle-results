@@ -6,7 +6,7 @@ interface Result {
   number: number;
   result: string;
   tries: string;
-  date: Date;
+  date: string;
   word: string;
 }
 
@@ -43,7 +43,7 @@ export default function Home() {
       newResultText.shift();
       const resultEmojis = newResultText.join('\n').trim();
       const word = e.target.word.value.trim().toUpperCase();
-      const date = new Date(e.target.date.value);
+      const date = e.target.date.value;
 
       const newResult: Result = {
         number: number,
@@ -120,6 +120,10 @@ export default function Home() {
     if (refDate) refDate.current!.defaultValue = dateStringFixed;
   }
 
+  function formatString(date: string) {
+    return date.split('T')[0];
+  }
+
   useEffect(() => {
     const savedResults = loadFromLocalStorage('results');
     if (savedResults) {
@@ -159,7 +163,7 @@ export default function Home() {
                   <td>{result.tries}</td>
                   <td><pre>{result.result}</pre></td>
                   <td>{result.word}</td>
-                  <td>{(new Date(result.date)).toLocaleDateString()}</td>
+                  <td>{formatString(result.date)}</td>
                   <td>
                     <button className='btn btn-success btn-sm me-2 mb-2' title='Share' onClick={() => shareResult(result.number)}><i className="bi bi-share"></i></button>
                     <button className='btn btn-danger btn-sm mb-2' title='Delete' onClick={() => removeResult(result.number)}><i className="bi bi-x-lg"></i></button>
