@@ -4,4 +4,5 @@ input[type=text] {
 
 pre {
   line-height: 17px;
+  font-size: inherit !important;
 }

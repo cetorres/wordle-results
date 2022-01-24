@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from "react";
 import { exportToJsonFile, importFromJson, loadFromLocalStorage, saveToLocaStorage } from "./Util";
-import { Modal, Tooltip } from "bootstrap";
+import { Modal } from "bootstrap";
 
 interface Result {
   number: number;
@@ -14,11 +14,20 @@ export default function Home() {
   const [results, setResults] = useState(Array<Result>());
   const [msgTitle, setMsgTitle] = useState('');
   const [msgBody, setMsgBody] = useState('');
+  const [errorMsg, setErrorMsg] = useState('');
   const [msgBodyElement, setMsgBodyElement] = useState<JSX.Element>();
   const refFileUpload = useRef<HTMLInputElement>(null);
+  let modalNewResult: Modal;
 
-  function addResult(e: any) {
+  function openNewResult() {
+    modalNewResult = new Modal(document.getElementById('modalNewResult')!);
+    modalNewResult.show();
+  }
+
+  function onSubmitNewResultForm(e: any) {
     e.preventDefault();
+
+    setErrorMsg('');
 
     try {
       const newResultText = e.target.resultText.value.trim().split('\n');
@@ -49,9 +58,11 @@ export default function Home() {
       e.target.resultText.value = '';
       e.target.word.value = '';
       e.target.date.value = null;
+
+      modalNewResult.hide();
     }
     catch (error: any) {
-      showModal('Error', 'Please enter a valid Wordle share text. ' + error.message);
+      setErrorMsg('Please enter a valid Wordle share text.');
     }
   }
 
@@ -103,26 +114,31 @@ export default function Home() {
     if (savedResults) {
       setResults(savedResults);
     }
-
-    const tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'))
-    tooltipTriggerList.map(function (tooltipTriggerEl) {
-      return new Tooltip(tooltipTriggerEl)
-    })
   }, []);
 
   return (
     <div className='container'>
       <div className="row align-items-start mt-5">
 
-        <div className="col-sm-9 col-12 mb-4">
-          <div className="d-grid d-md-flex justify-content-md-between">
+        <div className="col-12 mb-4">
+
+          <div className="d-flex justify-content-between">
             <h3>Saved Results</h3>
             <div>
-              <button className='btn btn-primary btn-sm me-2' data-bs-toggle="tooltip" data-bs-placement="bottom" title='Import JSON' onClick={importData}><i className="bi bi-download"></i></button>
-              <button className='btn btn-primary btn-sm' data-bs-toggle="tooltip" data-bs-placement="bottom" disabled={results.length === 0} title='Export JSON' onClick={exportData}><i className="bi bi-upload"></i></button>
+              <div className="btn-group">
+                <button type="button" className="btn btn-primary btn-sm" onClick={openNewResult}><i className="bi bi-plus-lg"></i> New Result</button>
+                <button type="button" className="btn btn-primary btn-sm dropdown-toggle dropdown-toggle-split" id="dropdownMenuOptions" data-bs-toggle="dropdown" aria-expanded="false" data-bs-reference="parent">
+                  <span className="visually-hidden">Toggle Dropdown</span>
+                </button>
+                <ul className="dropdown-menu" aria-labelledby="dropdownMenuOptions">
+                  <li><a className="dropdown-item" href='#' onClick={importData}>Import JSON</a></li>
+                  <li><a className={`dropdown-item ${results.length <= 0 ? 'disabled' : ''}`} href='#' onClick={exportData}>Export JSON</a></li>
+                </ul>
+              </div>
               <input accept="application/json" ref={refFileUpload} onChange={handleFileUploadChange} multiple={false} hidden type="file" />
             </div>
           </div>
+
           <div className="table-responsive">
             <table className='table table-striped'>
               <thead><tr><td>Number</td><td>Tries</td><td>Result</td><td>Word</td><td>Date</td><td>Actions</td></tr></thead>
@@ -134,34 +150,18 @@ export default function Home() {
                   <td>{result.word}</td>
                   <td>{(new Date(result.date)).toLocaleString()}</td>
                   <td>
-                    <button className='btn btn-success btn-sm me-2 mb-2' data-bs-toggle="tooltip" data-bs-placement="bottom" title='Share' onClick={() => shareResult(result.number)}><i className="bi bi-share"></i></button>
-                    <button className='btn btn-danger btn-sm mb-2' data-bs-toggle="tooltip" data-bs-placement="bottom" title='Delete' onClick={() => removeResult(result.number)}><i className="bi bi-x-lg"></i></button>
+                    <button className='btn btn-success btn-sm me-2 mb-2' title='Share' onClick={() => shareResult(result.number)}><i className="bi bi-share"></i></button>
+                    <button className='btn btn-danger btn-sm mb-2' title='Delete' onClick={() => removeResult(result.number)}><i className="bi bi-x-lg"></i></button>
                   </td>
                 </tr>)}
               </tbody>
             </table>
           </div>
-        </div>
 
-        <div className="col-sm-3 col-12 mb-4">
-          <h3>New Result</h3>
-          <form onSubmit={addResult}>
-            <div className="mb-3">
-              <textarea id='resultText' className='form-control' required={true} rows={11} cols={24} aria-describedby="resultTextHelp"></textarea>
-              <div id="resultTextHelp" className="form-text">Paste from Wordle share option.</div>
-            </div>
-            <div className="mb-3">
-              <label htmlFor="word" className='form-label'>Word</label>
-              <input type='text' required={true} id='word' className='form-control' />
-            </div>
-            <div className="mb-3">
-              <label htmlFor="date" className='form-label'>Date</label>
-              <input type='datetime-local' required={true} id='date' className='form-control' />
-            </div>
-            <div className="d-grid gap-2 d-md-flex justify-content-md-end">
-              <input type='submit' className="btn btn-primary" value='Save' />
-            </div>
-          </form>
+          {results.length <= 0 ?
+            <div className='d-grid d-md-flex justify-content-md-center mt-3'>
+              <button className="btn btn-outline-primary" onClick={openNewResult}>No results yet. Click to add a new result.</button>
+            </div> : ''}
         </div>
 
         {/* Modal */}
@@ -178,6 +178,42 @@ export default function Home() {
               <div className="modal-footer">
                 <button type="button" className="btn btn-secondary" data-bs-dismiss="modal">Close</button>
               </div>
+            </div>
+          </div>
+        </div>
+
+        {/* New Result Modal */}
+        <div className="modal fade" id="modalNewResult" tabIndex={-1} aria-labelledby="modalLabel" aria-hidden="true">
+          <div className="modal-dialog">
+            <div className="modal-content">
+              <form onSubmit={onSubmitNewResultForm}>
+                <div className="modal-header">
+                  <h5 className="modal-title" id="modalLabel">New Result</h5>
+                  <button type="button" className="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div className="modal-body">
+                  <div className="alert alert-danger alert-dismissible fade show" hidden={errorMsg === ''} role="alert">
+                    <strong>Error:</strong> {errorMsg}
+                    <button type="button" className="btn-close" onClick={() => setErrorMsg('')} aria-label="Close"></button>
+                  </div>
+                  <div className="mb-3">
+                    <textarea id='resultText' className='form-control' required={true} rows={11} cols={24} aria-describedby="resultTextHelp"></textarea>
+                    <div id="resultTextHelp" className="form-text">Paste from Wordle share option.</div>
+                  </div>
+                  <div className="mb-3">
+                    <label htmlFor="word" className='form-label'>Word</label>
+                    <input type='text' required={true} id='word' className='form-control' />
+                  </div>
+                  <div className="mb-3">
+                    <label htmlFor="date" className='form-label'>Date</label>
+                    <input type='datetime-local' required={true} id='date' className='form-control' />
+                  </div>
+                </div>
+                <div className="modal-footer">
+                  <button type="button" className="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                  <button type="submit" className="btn btn-primary">Save</button>
+                </div>
+              </form>
             </div>
           </div>
         </div>
