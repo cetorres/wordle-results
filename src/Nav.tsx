@@ -9,7 +9,7 @@ export default function Nav() {
       <nav className="navbar navbar-expand-md fixed-top navbar-dark bg-dark">
         <div className="container">
           <Link className="navbar-brand" to="/">
-            <img src='wordle_results_logo_192x192.png' alt='Wordle Results History Logo' className='nav-image' width='40' height='40' />
+            <img src='wordle_results_logo_192x192.png' alt='Wordle Results History Logo' className='nav-image' width='36' height='36' />
             Wordle Results History
           </Link>
           <button className="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">

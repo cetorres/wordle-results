@@ -1,6 +1,6 @@
-import React, { useState, useEffect } from "react";
-import { exportToJsonFile, loadFromLocalStorage, saveToLocaStorage } from "./Util";
-import { Modal } from "bootstrap";
+import React, { useState, useEffect, useRef } from "react";
+import { exportToJsonFile, importFromJson, loadFromLocalStorage, saveToLocaStorage } from "./Util";
+import { Modal, Tooltip } from "bootstrap";
 
 interface Result {
   number: number;
@@ -14,6 +14,8 @@ export default function Home() {
   const [results, setResults] = useState(Array<Result>());
   const [msgTitle, setMsgTitle] = useState('');
   const [msgBody, setMsgBody] = useState('');
+  const [msgBodyElement, setMsgBodyElement] = useState<JSX.Element>();
+  const refFileUpload = useRef<HTMLInputElement>(null);
 
   function addResult(e: any) {
     e.preventDefault();
@@ -63,11 +65,37 @@ export default function Home() {
     exportToJsonFile(results);
   }
 
-  function showModal(title: string, body: string) {
+  function importData() {
+    refFileUpload.current?.click();
+  }
+
+  function handleFileUploadChange(this: any, e: any) {
+    const fileObj = e.target.files[0];
+    const reader = new FileReader();
+    let fileloaded = (e: any) => {
+      const importedResults = importFromJson(e.target.result);
+      setResults(importedResults);
+      saveToLocaStorage('results', importedResults);
+    }
+    fileloaded = fileloaded.bind(this);
+    reader.onload = fileloaded;
+    reader.readAsText(fileObj);
+  }
+
+  function showModal(title: string, body?: string | null, bodyElement?: JSX.Element | null) {
     setMsgTitle(title);
-    setMsgBody(body);
+    if (body) setMsgBody(body!); else setMsgBody('');
+    if (bodyElement) setMsgBodyElement(bodyElement!); else setMsgBodyElement(undefined);
     const modalMessage = new Modal(document.getElementById('modalMessage')!);
     modalMessage.show();
+  }
+
+  function shareResult(number: number) {
+    const result = results.filter((result) => result.number === number)[0];
+    const shareText = `Wordle ${result.number} ${result.tries}\n\n${result.result}`;
+    navigator.clipboard.writeText(shareText);
+    document.execCommand('copy', false, shareText);
+    showModal('Share', null, <div>Result copied to the clipboard.<br/><br/><pre>{shareText}</pre></div>);
   }
 
   useEffect(() => {
@@ -75,13 +103,47 @@ export default function Home() {
     if (savedResults) {
       setResults(savedResults);
     }
+
+    const tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'))
+    tooltipTriggerList.map(function (tooltipTriggerEl) {
+      return new Tooltip(tooltipTriggerEl)
+    })
   }, []);
 
   return (
     <div className='container'>
       <div className="row align-items-start mt-5">
-      
-        <div className="col-sm-3 col-12 mb-3">
+
+        <div className="col-sm-9 col-12 mb-4">
+          <div className="d-grid d-md-flex justify-content-md-between">
+            <h3>Saved Results</h3>
+            <div>
+              <button className='btn btn-primary btn-sm me-2' data-bs-toggle="tooltip" data-bs-placement="bottom" title='Import JSON' onClick={importData}><i className="bi bi-download"></i></button>
+              <button className='btn btn-primary btn-sm' data-bs-toggle="tooltip" data-bs-placement="bottom" title='Export JSON' onClick={exportData}><i className="bi bi-upload"></i></button>
+              <input accept="application/json" ref={refFileUpload} onChange={handleFileUploadChange} multiple={false} hidden type="file" />
+            </div>
+          </div>
+          <div className="table-responsive">
+            <table className='table table-striped'>
+              <thead><tr><td>Number</td><td>Tries</td><td>Result</td><td>Word</td><td>Date</td><td>Actions</td></tr></thead>
+              <tbody>
+                {results.sort((r1, r2) => r2.number - r1.number).map((result, i) => <tr key={i}>
+                  <td>{result.number}</td>
+                  <td>{result.tries}</td>
+                  <td><pre>{result.result}</pre></td>
+                  <td>{result.word}</td>
+                  <td>{(new Date(result.date)).toLocaleString()}</td>
+                  <td>
+                    <button className='btn btn-success btn-sm me-2 mb-2' data-bs-toggle="tooltip" data-bs-placement="bottom" title='Share' onClick={() => shareResult(result.number)}><i className="bi bi-share"></i></button>
+                    <button className='btn btn-danger btn-sm mb-2' data-bs-toggle="tooltip" data-bs-placement="bottom" title='Delete' onClick={() => removeResult(result.number)}><i className="bi bi-x-lg"></i></button>
+                  </td>
+                </tr>)}
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <div className="col-sm-3 col-12 mb-4">
           <h3>New Result</h3>
           <form onSubmit={addResult}>
             <div className="mb-3">
@@ -96,30 +158,10 @@ export default function Home() {
               <label htmlFor="date" className='form-label'>Date</label>
               <input type='datetime-local' required={true} id='date' className='form-control' />
             </div>
-            <input type='submit' className="btn btn-primary" value='Save' />
+            <div className="d-grid gap-2 d-md-flex justify-content-md-end">
+              <input type='submit' className="btn btn-primary" value='Save' />
+            </div>
           </form>
-        </div>
-
-        <div className="col-sm-9 col-12 mb-4">
-          <h3>Saved Results</h3>
-          <div className="table-responsive">
-            <table className='table table-striped'>
-              <thead><tr><td>Number</td><td>Tries</td><td>Result</td><td>Word</td><td>Date</td><td></td></tr></thead>
-              <tbody>
-                {results.sort((r1, r2) => r2.number - r1.number).map((result, i) => <tr key={i}>
-                  <td>{result.number}</td>
-                  <td>{result.tries}</td>
-                  <td><pre>{result.result}</pre></td>
-                  <td>{result.word}</td>
-                  <td>{(new Date(result.date)).toLocaleString()}</td>
-                  <td><button className='btn btn-danger btn-sm' onClick={() => removeResult(result.number)}><i className="bi bi-x-lg"></i></button></td>
-                </tr>)}
-              </tbody>
-            </table>
-          </div>
-          <div className="d-grid gap-2 d-md-flex justify-content-md-end">
-            <button className='btn btn-primary' disabled={results.length === 0} onClick={exportData}>Export JSON</button>
-          </div>
         </div>
 
         {/* Modal */}
@@ -131,7 +173,7 @@ export default function Home() {
                 <button type="button" className="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
               </div>
               <div className="modal-body">
-                {msgBody}
+                {msgBody}{msgBodyElement}
               </div>
               <div className="modal-footer">
                 <button type="button" className="btn btn-secondary" data-bs-dismiss="modal">Close</button>

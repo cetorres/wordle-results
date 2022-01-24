@@ -10,6 +10,11 @@ export function exportToJsonFile(jsonData: any) {
   linkElement.click();
 }
 
+export function importFromJson(jsonStringData: string) {
+  const json = JSON.parse(jsonStringData);
+  return json;
+}
+
 export function saveToLocaStorage(key: string, value: any) {
   const json = JSON.stringify(value);
   localStorage.setItem(key, json);
