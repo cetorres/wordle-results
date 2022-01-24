@@ -67,9 +67,11 @@ export default function Home() {
   }
 
   function removeResult(number: number) {
-    const filteredResults = results.filter((result) => result.number !== number);
-    setResults(filteredResults);
-    saveToLocaStorage('results', filteredResults);
+    if (window.confirm('Confirm delete this result?')) {
+      const filteredResults = results.filter((result) => result.number !== number);
+      setResults(filteredResults);
+      saveToLocaStorage('results', filteredResults);
+    }
   }
 
   function exportData() {
