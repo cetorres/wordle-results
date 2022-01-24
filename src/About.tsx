@@ -9,7 +9,7 @@ export default function About() {
           <strong>Wordle Result</strong> is a simple app to help you store your <a href='https://www.powerlanguage.co.uk/wordle/' rel="noreferrer" target='_blank'>Wordle</a> game results history.
         </p>
         <p className="lead">
-          Just copy and paste the sharing text from the game, enter the word and the date and the app can infer more data from the sharing the text itself, like game number, tries and the result emojis.
+          Just copy and paste the sharing text from the game, enter the word, and the date. The app can infer more data from the sharing text itself, like game number, tries and the result emojis.
         </p>
         <p className="lead">
           Example of a Wordle sharing text:<br/>
