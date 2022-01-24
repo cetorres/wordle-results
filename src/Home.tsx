@@ -131,8 +131,8 @@ export default function Home() {
                   <span className="visually-hidden">Toggle Dropdown</span>
                 </button>
                 <ul className="dropdown-menu" aria-labelledby="dropdownMenuOptions">
-                  <li><a className="dropdown-item" href='#' onClick={importData}>Import JSON</a></li>
-                  <li><a className={`dropdown-item ${results.length <= 0 ? 'disabled' : ''}`} href='#' onClick={exportData}>Export JSON</a></li>
+                  <li><button className="dropdown-item" onClick={importData}>Import JSON</button></li>
+                  <li><button className={`dropdown-item ${results.length <= 0 ? 'disabled' : ''}`} onClick={exportData}>Export JSON</button></li>
                 </ul>
               </div>
               <input accept="application/json" ref={refFileUpload} onChange={handleFileUploadChange} multiple={false} hidden type="file" />
