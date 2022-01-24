@@ -119,7 +119,7 @@ export default function Home() {
             <h3>Saved Results</h3>
             <div>
               <button className='btn btn-primary btn-sm me-2' data-bs-toggle="tooltip" data-bs-placement="bottom" title='Import JSON' onClick={importData}><i className="bi bi-download"></i></button>
-              <button className='btn btn-primary btn-sm' data-bs-toggle="tooltip" data-bs-placement="bottom" title='Export JSON' onClick={exportData}><i className="bi bi-upload"></i></button>
+              <button className='btn btn-primary btn-sm' data-bs-toggle="tooltip" data-bs-placement="bottom" disabled={results.length === 0} title='Export JSON' onClick={exportData}><i className="bi bi-upload"></i></button>
               <input accept="application/json" ref={refFileUpload} onChange={handleFileUploadChange} multiple={false} hidden type="file" />
             </div>
           </div>
