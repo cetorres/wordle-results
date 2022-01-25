@@ -1,14 +1,7 @@
 import React, { useState, useEffect, useRef } from "react";
 import { exportToJsonFile, importFromJson, loadFromLocalStorage, saveToLocaStorage } from "./Util";
 import { Modal } from "bootstrap";
-
-interface Result {
-  number: number;
-  result: string;
-  tries: string;
-  date: string;
-  word: string;
-}
+import { Result } from "./interfaces";
 
 export default function Home() {
   const [results, setResults] = useState(Array<Result>());
@@ -145,8 +138,8 @@ export default function Home() {
             <h3>Saved Results</h3>
             <div>
               <div className="btn-group">
-                <button type="button" className="btn btn-primary btn-sm" onClick={openNewResult}><i className="bi bi-plus-lg"></i> New Result</button>
-                <button type="button" className="btn btn-primary btn-sm dropdown-toggle dropdown-toggle-split" id="dropdownMenuOptions" data-bs-toggle="dropdown" aria-expanded="false" data-bs-reference="parent">
+                <button type="button" className="btn btn-success btn-sm" onClick={openNewResult}><i className="bi bi-plus-lg"></i> New Result</button>
+                <button type="button" className="btn btn-success btn-sm dropdown-toggle dropdown-toggle-split" id="dropdownMenuOptions" data-bs-toggle="dropdown" aria-expanded="false" data-bs-reference="parent">
                   <span className="visually-hidden">Toggle Dropdown</span>
                 </button>
                 <ul className="dropdown-menu" aria-labelledby="dropdownMenuOptions">

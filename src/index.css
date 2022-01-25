@@ -1,3 +1,7 @@
+:root {
+  --wordle-green-color: #6aaa64;
+}
+
 .nav-image {
   border-radius: 6px;
   vertical-align: -0.57em;
