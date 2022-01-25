@@ -21,9 +21,12 @@ export default function Home() {
   let modalNewResult: Modal;
 
   function openNewResult() {
-    setDefaultDate();
     modalNewResult = new Modal(document.getElementById('modalNewResult')!);
     modalNewResult.show();
+    setTimeout(() => {
+      document.getElementById('resultText')?.focus();
+      setDefaultDate();
+    }, 500);
   }
 
   function onSubmitNewResultForm(e: any) {
@@ -114,10 +117,11 @@ export default function Home() {
   }
 
   function setDefaultDate() {
+    // Get current date and format as yyyy-MM-dd
+    // So it can be set the date input as the default date
     const date = new Date();
-    const dateString = date.toISOString();
-    const dateStringFixed = dateString.split('T')[0];
-    if (refDate) refDate.current!.defaultValue = dateStringFixed;
+    const dateString = date.getFullYear() + '-' + (date.getMonth()+1).toString().padStart(2, '0') + '-' + date.getDate().toString().padStart(2, '0');
+    if (refDate) refDate.current!.defaultValue = dateString;
   }
 
   function formatString(date: string) {
