@@ -8,7 +8,6 @@ export default function Statistics() {
   const [winsPercentage, setWinsPercentage] = useState('0%');
   const [numberWins, setNumberWins] = useState('');
   const [numberLosses, setNumberLosses] = useState('');
-  const [firstDate, setFirstDate] = useState('');
   const [lastDate, setLastDate] = useState('');
   const [chartData, setChartData] = useState<any>([]);
 
@@ -26,9 +25,6 @@ export default function Statistics() {
     
     setNumberWins(wins.toString());
     setNumberLosses(losts.toString());
-
-    const firstGameDate = savedResults.sort((r1, r2) => r1.number - r2.number)[0].date.split('T')[0];
-    setFirstDate(firstGameDate);
 
     const lastGameDate = savedResults.sort((r1, r2) => r2.number - r1.number)[0].date.split('T')[0];
     setLastDate(lastGameDate);
@@ -74,7 +70,7 @@ export default function Statistics() {
                 <h4>{ gamesPlayed }</h4>
               </div>
               <div className="card-footer text-muted">
-                Last: { lastDate } - First: { firstDate }
+                Last: { lastDate }
               </div>
             </div>
           </div>
@@ -87,7 +83,7 @@ export default function Statistics() {
                 <h4>{ winsPercentage }%</h4>
               </div>
               <div className="card-footer text-muted">
-                Wins: {numberWins} - Losses: {numberLosses}
+                Wins: {numberWins}, Losses: {numberLosses}
               </div>
             </div>
           </div>
