@@ -100,7 +100,7 @@ export default function Statistics() {
                     chartType="Bar"
                     data={chartData}
                     width="100%"
-                    height="400px"
+                    height="250px"
                     options={{ legend: { position: "none" }, colors: ['#6aaa64'] }}
                   /> : 'No data'}
               </div>
