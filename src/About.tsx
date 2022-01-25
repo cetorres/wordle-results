@@ -6,7 +6,7 @@ export default function About() {
       <div className="mt-5">
         <h3>About</h3>
         <p className="lead">
-          <strong>Wordle Result</strong> is a simple app to help you store your <a href='https://www.powerlanguage.co.uk/wordle/' rel="noreferrer" target='_blank'>Wordle</a> game results history.
+          <strong>Wordle Result</strong> is a simple app to help you store your <a href='https://www.powerlanguage.co.uk/wordle/' className='normal-link' target='_blank'>Wordle</a> game results history.
         </p>
         <p className="lead">
           Just copy and paste the sharing text from the game, enter the word, and the date. The app can infer more data from the sharing text itself, like game number, tries and the result emojis.
@@ -32,7 +32,7 @@ export default function About() {
           This is app is not affiliated with Wordle in any form, it's an independent tool created by a fan of Wordle.
         </p>
         <p className="text-center mt-5">
-          Created with ❤️ in Colorado by <a href='https://cetorres.com' rel="noreferrer" target='_blank'>Carlos E. Torres</a>.<br />
+          Created with ❤️ in Colorado by <a href='https://cetorres.com' className='normal-link' target='_blank'>Carlos E. Torres</a>.<br />
           Copyright 2022. All Rights Reserved.
         </p>
       </div>

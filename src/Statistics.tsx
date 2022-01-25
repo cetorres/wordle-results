@@ -4,11 +4,11 @@ import { loadFromLocalStorage } from "./Util";
 import { Chart } from "react-google-charts";
 
 export default function Statistics() {
-  const [gamesPlayed, setGamesPlayed] = useState('');
-  const [winsPercentage, setWinsPercentage] = useState('0%');
-  const [numberWins, setNumberWins] = useState('');
-  const [numberLosses, setNumberLosses] = useState('');
-  const [lastDate, setLastDate] = useState('');
+  const [gamesPlayed, setGamesPlayed] = useState('0');
+  const [winsPercentage, setWinsPercentage] = useState('0');
+  const [numberWins, setNumberWins] = useState('0');
+  const [numberLosses, setNumberLosses] = useState('0');
+  const [lastDate, setLastDate] = useState('Never');
   const [chartData, setChartData] = useState<any>([]);
 
   function loadStatistics(savedResults: Array<Result>) {
@@ -95,13 +95,14 @@ export default function Statistics() {
                 Tries Distribution
               </div>
               <div className="card-body">
-                <Chart
-                  chartType="Bar"
-                  data={chartData}
-                  width="100%"
-                  height="400px"
-                  options={{legend: { position: "none" }, colors: ['#6aaa64']}}
-                />
+                {chartData.length > 0 ?
+                  <Chart
+                    chartType="Bar"
+                    data={chartData}
+                    width="100%"
+                    height="400px"
+                    options={{ legend: { position: "none" }, colors: ['#6aaa64'] }}
+                  /> : 'No data'}
               </div>
             </div>
           </div>

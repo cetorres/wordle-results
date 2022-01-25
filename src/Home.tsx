@@ -172,7 +172,7 @@ export default function Home() {
 
           {results.length <= 0 ?
             <div className='d-grid d-md-flex justify-content-md-center mt-3'>
-              <button className="btn btn-outline-primary" onClick={openNewResult}>No results yet. Click to add a new result.</button>
+              <button className="btn btn-outline-success" onClick={openNewResult}>No results yet. Click to add a new result.</button>
             </div> : ''}
         </div>
 
