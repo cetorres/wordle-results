@@ -26,6 +26,9 @@ export default function About() {
           Your results are saved in your browser's local storage, so no account creation or any authentication is needed, just like Wordle does. But you can also import and export the results list to a JSON file for your convinience.
         </p>
         <p className="lead">
+          You can also view some useful statistics based on the results data, like the number of games played, wins percentage, and the tries distribution.
+        </p>
+        <p className="lead">
           This is app is not affiliated with Wordle in any form, it's an independent tool created by a fan of Wordle.
         </p>
         <p className="text-center mt-5">
