@@ -4,12 +4,14 @@ import Home from './Home';
 import About from "./About";
 import Nav from './Nav';
 import './App.css';
+import Statistics from "./Statistics";
 
 function App() {
   return (
     <Routes>
       <Route path="/" element={<Main />}>
         <Route index element={<Home />} />
+        <Route path="statistics" element={<Statistics />} />
         <Route path="about" element={<About />} />
       </Route>
     </Routes>

@@ -34,6 +34,12 @@ export default function Nav() {
                 <Link to="/" className={location.pathname === '/' ? 'nav-link active' : 'nav-link'} aria-current="page">Home</Link>
               </li>
               <li className="nav-item d-none d-sm-block">
+                <Link to="/statistics" className={location.pathname === '/statistics' ? 'nav-link active' : 'nav-link'} aria-current="page">Statistics</Link>
+              </li>
+              <li className="nav-item d-block d-sm-none">
+                <Link to="/statistics" className={location.pathname === '/statistics' ? 'nav-link active' : 'nav-link'} aria-current="page">Statistics</Link>
+              </li>
+              <li className="nav-item d-none d-sm-block">
                 <Link to="/about" className={location.pathname === '/about' ? 'nav-link active' : 'nav-link'} aria-current="page">About</Link>
               </li>
               <li className="nav-item d-block d-sm-none">
