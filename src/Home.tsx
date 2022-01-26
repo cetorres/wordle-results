@@ -2,9 +2,12 @@ import React, { useState, useEffect, useRef } from "react";
 import { exportToJsonFile, importFromJson, loadFromLocalStorage, saveToLocaStorage } from "./Util";
 import { Modal } from "bootstrap";
 import { Result } from "./interfaces";
+import { firebaseAuth, saveResultsToCurrentUser, loadResultsForCurrentUser } from "./Firebase";
+import { useAuthState } from "react-firebase-hooks/auth";
 
-export default function Home() {
+export default function Home(props: any) {
   const [results, setResults] = useState(Array<Result>());
+  const [user] = useAuthState(firebaseAuth);
   const [msgTitle, setMsgTitle] = useState('');
   const [msgBody, setMsgBody] = useState('');
   const [errorMsg, setErrorMsg] = useState('');
@@ -50,7 +53,12 @@ export default function Home() {
       };
 
       setResults([...results, newResult]);
-      saveToLocaStorage('results', [...results, newResult]);
+      if (user) {
+        saveResultsToCurrentUser([...results, newResult]);
+      }
+      else {
+        saveToLocaStorage('results', [...results, newResult]);
+      }
     
       e.target.resultText.value = '';
       e.target.word.value = '';
@@ -68,7 +76,13 @@ export default function Home() {
     if (window.confirm('Confirm delete this result?')) {
       const filteredResults = results.filter((res) => res !== resultToDelete);
       setResults(filteredResults);
-      saveToLocaStorage('results', filteredResults);
+
+      if (user) {
+        saveResultsToCurrentUser(filteredResults);
+      }
+      else {
+        saveToLocaStorage('results', filteredResults);
+      }
     }
   }
 
@@ -86,7 +100,13 @@ export default function Home() {
     let fileloaded = (e: any) => {
       const importedResults = importFromJson(e.target.result);
       setResults(importedResults);
-      saveToLocaStorage('results', importedResults);
+
+      if (user) {
+        saveResultsToCurrentUser(importedResults);
+      }
+      else {
+        saveToLocaStorage('results', importedResults);
+      }
     }
     fileloaded = fileloaded.bind(this);
     reader.onload = fileloaded;
@@ -122,11 +142,28 @@ export default function Home() {
   }
 
   useEffect(() => {
-    const savedResults = loadFromLocalStorage('results');
-    if (savedResults) {
-      setResults(savedResults);
+    loadResults();
+  }, [user]);
+
+  useEffect(() => {
+    if (props.reloadPage) {
+      props.setReloadPage(false);
+      loadResults();
     }
-  }, []);
+  }, [props.reloadPage]);
+
+  async function loadResults() {
+    if (user) {
+      const savedResults = await loadResultsForCurrentUser();
+      setResults(savedResults ?? []);
+    }
+    else {
+      const savedResults = loadFromLocalStorage('results');
+      if (savedResults) {
+        setResults(savedResults ?? []);
+      }
+    }
+  }
 
   return (
     <div className='container'>
@@ -144,7 +181,7 @@ export default function Home() {
                 </button>
                 <ul className="dropdown-menu" aria-labelledby="dropdownMenuOptions">
                   <li><button className="dropdown-item" onClick={importData}>Import JSON</button></li>
-                  <li><button className={`dropdown-item ${results.length <= 0 ? 'disabled' : ''}`} onClick={exportData}>Export JSON</button></li>
+                  <li><button className={`dropdown-item ${!results || results.length <= 0 ? 'disabled' : ''}`} onClick={exportData}>Export JSON</button></li>
                 </ul>
               </div>
               <input accept="application/json" ref={refFileUpload} onChange={handleFileUploadChange} multiple={false} hidden type="file" />
@@ -155,7 +192,7 @@ export default function Home() {
             <table className='table table-striped'>
               <thead><tr><td>Number</td><td>Tries</td><td>Result</td><td>Word</td><td>Date</td><td>Actions</td></tr></thead>
               <tbody>
-                {results.sort((r1, r2) => r2.number - r1.number).map((result, i) => <tr key={i}>
+                {results && results.sort((r1, r2) => r2.number - r1.number).map((result, i) => <tr key={i}>
                   <td>{result.number}</td>
                   <td>{result.tries}</td>
                   <td><pre>{result.result}</pre></td>
@@ -170,7 +207,7 @@ export default function Home() {
             </table>
           </div>
 
-          {results.length <= 0 ?
+          {!results || results.length <= 0 ?
             <div className='d-grid d-md-flex justify-content-md-center mt-3'>
               <button className="btn btn-outline-success" onClick={openNewResult}>No results yet. Click to add a new result.</button>
             </div> : ''}

@@ -20,6 +20,10 @@ export function saveToLocaStorage(key: string, value: any) {
   localStorage.setItem(key, json);
 }
 
+export function clearLocaStorage(key: string) {
+  localStorage.removeItem(key);
+}
+
 export function loadFromLocalStorage(key: string): any {
   const json = localStorage.getItem(key);
   return json ? JSON.parse(json) : '';
