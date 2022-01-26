@@ -31,9 +31,9 @@ export default function About() {
         <p className="lead">
           This is app is not affiliated with Wordle in any form, it's an independent tool created by a fan of Wordle.
         </p>
-        <p className="text-center mt-5">
-          Created with ❤️ in Colorado by <a href='https://cetorres.com' className='normal-link' target='_blank'>Carlos E. Torres</a>.<br />
-          Copyright 2022. All Rights Reserved.
+        <p className="text-center created-by mt-5 mb-4">
+          Created with <span className='heart'>♥</span> in Colorado by <a href='https://cetorres.com' className='normal-link' target='_blank'>Carlos E. Torres</a>.<br />
+          Send a <a className='normal-link' href='mailto:wordle-results@cetorres.com?subject=Feedback'>feedback</a>. Copyright 2022. All rights reserved.
         </p>
       </div>
     </div>

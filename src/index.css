@@ -4,6 +4,18 @@
 
 a.normal-link {
   color: var(--wordle-green-color) !important;
+  text-decoration: none;
+}
+a.normal-link:hover {
+  text-decoration: underline;
+}
+
+.created-by {
+  font-size: 14px;
+}
+
+.heart {
+  color: var(--wordle-green-color);
 }
 
 .nav-image {
