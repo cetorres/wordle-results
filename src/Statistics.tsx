@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { Result } from "./interfaces";
 import { loadFromLocalStorage } from "./Util";
 import { Chart } from "react-google-charts";
-import { firebaseAuth, saveResultsToCurrentUser, loadResultsForCurrentUser } from "./Firebase";
+import { firebaseAuth, loadResultsForCurrentUser } from "./Firebase";
 import { useAuthState } from "react-firebase-hooks/auth";
 
 export default function Statistics(props: any) {
@@ -56,17 +56,6 @@ export default function Statistics(props: any) {
     setChartData(data);
   }
 
-  useEffect(() => {
-    loadResults();
-  }, [user]);
-
-  useEffect(() => {
-    if (props.reloadPage) {
-      props.setReloadPage(false);
-      loadResults();
-    }
-  }, [props.reloadPage]);
-
   async function loadResults() {
     if (user) {
       const savedResults = await loadResultsForCurrentUser();
@@ -79,6 +68,17 @@ export default function Statistics(props: any) {
       }
     }
   }
+
+  useEffect(() => {
+    loadResults();
+  }, [user]);
+
+  useEffect(() => {
+    if (props.reloadPage) {
+      props.setReloadPage(false);
+      loadResults();
+    }
+  }, [props.reloadPage]);
   
   return (
     <div className='container'>

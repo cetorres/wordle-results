@@ -1,13 +1,13 @@
 import React, { useState, useEffect, useRef } from "react";
-import { exportToJsonFile, importFromJson, loadFromLocalStorage, saveToLocaStorage } from "./Util";
+import { exportToJsonFile, importFromJson, isIOS, loadFromLocalStorage, saveToLocaStorage } from "./Util";
 import { Modal } from "bootstrap";
 import { Result } from "./interfaces";
-import { firebaseAuth, saveResultsToCurrentUser, loadResultsForCurrentUser } from "./Firebase";
+import { firebaseAuth, saveResultsToCurrentUser, loadResultsForCurrentUser, signInWithGoogle } from "./Firebase";
 import { useAuthState } from "react-firebase-hooks/auth";
 
 export default function Home(props: any) {
   const [results, setResults] = useState(Array<Result>());
-  const [user] = useAuthState(firebaseAuth);
+  const [user, loading] = useAuthState(firebaseAuth);
   const [msgTitle, setMsgTitle] = useState('');
   const [msgBody, setMsgBody] = useState('');
   const [errorMsg, setErrorMsg] = useState('');
@@ -141,17 +141,6 @@ export default function Home(props: any) {
     return date.split('T')[0];
   }
 
-  useEffect(() => {
-    loadResults();
-  }, [user]);
-
-  useEffect(() => {
-    if (props.reloadPage) {
-      props.setReloadPage(false);
-      loadResults();
-    }
-  }, [props.reloadPage]);
-
   async function loadResults() {
     if (user) {
       const savedResults = await loadResultsForCurrentUser();
@@ -164,6 +153,17 @@ export default function Home(props: any) {
       }
     }
   }
+
+  useEffect(() => {
+    loadResults();
+  }, [user]);
+
+  useEffect(() => {
+    if (props.reloadPage) {
+      props.setReloadPage(false);
+      loadResults();
+    }
+  }, [props.reloadPage]);
 
   return (
     <div className='container'>
@@ -207,9 +207,26 @@ export default function Home(props: any) {
             </table>
           </div>
 
-          {!results || results.length <= 0 ?
+          {loading && (!results || results.length <= 0) ?
+            <div className='text-center mt-4'>
+              <div className="spinner-border" role="status">
+                <span className="visually-hidden">Loading...</span>
+              </div>
+            </div>
+          : ''}
+
+          {!loading && (!results || results.length <= 0) ?
             <div className='d-grid d-md-flex justify-content-md-center mt-3'>
-              <button className="btn btn-outline-success" onClick={openNewResult}>No results yet. Click to add a new result.</button>
+              <div className='text-center'>
+                <button className="btn btn-outline-success" onClick={openNewResult}>No results yet. Click to add a new result.</button>
+                {!user && isIOS() ?
+                <div>
+                  <div className='text-muted mb-1'>or</div>
+                  <button className='btn btn-outline-success' onClick={signInWithGoogle}><i className="bi bi-google"></i>&nbsp;&nbsp;Sign in with Google</button>
+                  <div className='text-muted mt-1'><small>If you want to save results with your Google accout.</small></div>
+                </div>
+                : ''}
+              </div>
             </div> : ''}
         </div>
 

@@ -3,14 +3,37 @@ import { useLocation, Link } from "react-router-dom";
 import { Collapse } from "bootstrap";
 import { firebaseAuth, signInWithGoogle, logout, saveResultsToCurrentUser } from "./Firebase";
 import { useAuthState } from "react-firebase-hooks/auth";
-import { clearLocaStorage, loadFromLocalStorage, saveToLocaStorage } from "./Util";
+import { clearLocaStorage, isIOS, loadFromLocalStorage, saveToLocaStorage } from "./Util";
 
 export default function Nav(props: any) {
   const location = useLocation();
   const [user, loading] = useAuthState(firebaseAuth);
-  const [showSignInMsg, setShowSignInMsg] = useState(true);
+  const [showSignInMsg, setShowSignInMsg] = useState(isIOS() ? false : true);
   const [showSaveLocalResults, setShowSaveLocalResults] = useState(false);
 
+  async function askToSaveLocalResults() {
+    const askedToSave = loadFromLocalStorage('askedToSave');
+    const savedResults = loadFromLocalStorage('results');
+    if (!askedToSave && savedResults && savedResults.length > 0) {
+      saveToLocaStorage('askedToSave', true);
+      if (window.confirm('Do you want to save your local saved results in our server, so you can see them anywhere you sign in with your Google account?')) {
+        saveResults();
+      }
+    }
+  }
+
+  async function saveResults() {
+    const savedResults = loadFromLocalStorage('results');
+    if (await saveResultsToCurrentUser(savedResults)) {
+      setShowSaveLocalResults(false);
+      props.setReloadPage(true);
+      clearLocaStorage('results');
+    }
+    else {
+      alert('Could not save local results to your account. Try again later.');
+    }
+  }
+  
   useEffect(() => {
     const navLinks = document.querySelectorAll('.nav-item.d-block.d-sm-none');
     const menuToggle = document.getElementById('navbarNav')!;
@@ -30,31 +53,6 @@ export default function Nav(props: any) {
       askToSaveLocalResults();
     }
   }, [user]);
-
-  async function askToSaveLocalResults() {
-    const askedToSave = loadFromLocalStorage('askedToSave');
-    const savedResults = loadFromLocalStorage('results');
-    if (!askedToSave && savedResults && savedResults.length > 0) {
-      saveToLocaStorage('askedToSave', true);
-      if (window.confirm('Do you want to save your local saved results in our server, so you can see them anywhere you sign in with your Google account?')) {
-        saveResultsToCurrentUser(savedResults);
-        props.setReloadPage(true);
-        clearLocaStorage('results');
-      }
-    }
-  }
-
-  async function saveResults() {
-    const savedResults = loadFromLocalStorage('results');
-    if (await saveResultsToCurrentUser(savedResults)) {
-      setShowSaveLocalResults(false);
-      props.setReloadPage(true);
-      clearLocaStorage('results');
-    }
-    else {
-      alert('Could not save local results to your account. Try again later.');
-    }
-  }
 
   function signOut() {
     logout();
@@ -117,7 +115,7 @@ export default function Nav(props: any) {
                         <small className='text-light me-1'>Want to save results with your Google accout?</small>
                         <button type="button" className="btn-close btn-close-white btn-sm" onClick={() => setShowSignInMsg(!showSignInMsg)} aria-label="Close"></button>
                       </div> : ''}
-                    <button className='btn btn-outline-light btn-sm' onClick={signInWithGoogle}>Sign in with Google</button>
+                    <button className='btn btn-outline-light btn-sm' onClick={signInWithGoogle}><i className="bi bi-google"></i>&nbsp;&nbsp;Sign in with Google</button>
                   </div> 
               )}
             </div>

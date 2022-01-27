@@ -13,15 +13,15 @@ export default function About(props: any) {
         </p>
         <p className="lead">
           Example of a Wordle sharing text:<br/>
-          <pre style={{marginTop: '10px', background: '#EEE', padding: '20px'}}>
-            Wordle 216 4/6<br/>
-            <br/>
-            ⬛⬛⬛🟨⬛<br/>
-            🟨🟩🟩⬛🟨<br/>
-            🟩🟩🟩🟩⬛<br/>
-            🟩🟩🟩🟩🟩
-          </pre>
         </p>
+        <pre style={{marginTop: '10px', background: '#EEE', padding: '20px'}}>
+          Wordle 216 4/6<br/>
+          <br/>
+          ⬛⬛⬛🟨⬛<br/>
+          🟨🟩🟩⬛🟨<br/>
+          🟩🟩🟩🟩⬛<br/>
+          🟩🟩🟩🟩🟩
+        </pre>
         <p className="lead">
           Your results are saved in your browser's local storage, so no account creation or any authentication is needed, just like Wordle does. But you can also import and export the results list to a JSON file for your convinience.
         </p>

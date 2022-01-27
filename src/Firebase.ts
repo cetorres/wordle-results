@@ -17,7 +17,6 @@ import {
   addDoc,
   Timestamp
 } from "firebase/firestore";
-import { clearLocaStorage } from "./Util";
 
 // Your web app's Firebase configuration
 // For Firebase JS SDK v7.20.0 and later, measurementId is optional
@@ -76,7 +75,7 @@ const loadResultsForCurrentUser = async () => {
     if (user) {
       const resultsQuery = query(collection(firestoreDb, "results"), where("uid", "==", user.uid));
       const docs = await getDocs(resultsQuery);
-      if (docs.docs.length >= 0) {
+      if (docs.docs.length >= 0 && docs.docs[0]) {
         return docs.docs[0].get('results');
       }
     }
