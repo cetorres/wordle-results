@@ -1,12 +1,12 @@
-import React, { useState, useEffect, useRef } from "react";
-import { exportToJsonFile, importFromJson, isIOS, loadFromLocalStorage, saveToLocaStorage } from "./Util";
+import React, { useState, useRef } from "react";
+import { exportToJsonFile, importFromJson, isIOS } from "./Util";
 import { Modal } from "bootstrap";
 import { Result } from "./interfaces";
-import { firebaseAuth, saveResultsToCurrentUser, loadResultsForCurrentUser, signInWithGoogle } from "./Firebase";
+import { firebaseAuth, signInWithGoogle } from "./Firebase";
 import { useAuthState } from "react-firebase-hooks/auth";
 
 export default function Home(props: any) {
-  const [results, setResults] = useState(Array<Result>());
+  const { results, saveResults } = props;
   const [user, loading] = useAuthState(firebaseAuth);
   const [msgTitle, setMsgTitle] = useState('');
   const [msgBody, setMsgBody] = useState('');
@@ -52,13 +52,7 @@ export default function Home(props: any) {
         word: word
       };
 
-      setResults([...results, newResult]);
-      if (user) {
-        saveResultsToCurrentUser([...results, newResult]);
-      }
-      else {
-        saveToLocaStorage('results', [...results, newResult]);
-      }
+      saveResults([...results, newResult]);
     
       e.target.resultText.value = '';
       e.target.word.value = '';
@@ -74,15 +68,8 @@ export default function Home(props: any) {
 
   function removeResult(resultToDelete: Result) {
     if (window.confirm('Confirm delete this result?')) {
-      const filteredResults = results.filter((res) => res !== resultToDelete);
-      setResults(filteredResults);
-
-      if (user) {
-        saveResultsToCurrentUser(filteredResults);
-      }
-      else {
-        saveToLocaStorage('results', filteredResults);
-      }
+      const filteredResults = results.filter((res: Result) => res !== resultToDelete);
+      saveResults(filteredResults);
     }
   }
 
@@ -99,14 +86,7 @@ export default function Home(props: any) {
     const reader = new FileReader();
     let fileloaded = (e: any) => {
       const importedResults = importFromJson(e.target.result);
-      setResults(importedResults);
-
-      if (user) {
-        saveResultsToCurrentUser(importedResults);
-      }
-      else {
-        saveToLocaStorage('results', importedResults);
-      }
+      saveResults(importedResults);
     }
     fileloaded = fileloaded.bind(this);
     reader.onload = fileloaded;
@@ -122,7 +102,7 @@ export default function Home(props: any) {
   }
 
   function shareResult(resultToShare: Result) {
-    const result = results.filter((res) => res === resultToShare)[0];
+    const result = results.filter((res: Result) => res === resultToShare)[0];
     const shareText = `Wordle ${result.number} ${result.tries}\n\n${result.result}`;
     navigator.clipboard.writeText(shareText);
     document.execCommand('copy', false, shareText);
@@ -140,30 +120,6 @@ export default function Home(props: any) {
   function formatString(date: string) {
     return date.split('T')[0];
   }
-
-  async function loadResults() {
-    if (user) {
-      const savedResults = await loadResultsForCurrentUser();
-      setResults(savedResults ?? []);
-    }
-    else {
-      const savedResults = loadFromLocalStorage('results');
-      if (savedResults) {
-        setResults(savedResults ?? []);
-      }
-    }
-  }
-
-  useEffect(() => {
-    loadResults();
-  }, [user]);
-
-  useEffect(() => {
-    if (props.reloadPage) {
-      props.setReloadPage(false);
-      loadResults();
-    }
-  }, [props.reloadPage]);
 
   return (
     <div className='container'>
@@ -192,7 +148,7 @@ export default function Home(props: any) {
             <table className='table table-striped'>
               <thead><tr><td>Number</td><td>Tries</td><td>Result</td><td>Word</td><td>Date</td><td>Actions</td></tr></thead>
               <tbody>
-                {results && results.sort((r1, r2) => r2.number - r1.number).map((result, i) => <tr key={i}>
+                {results && results.sort((r1: Result, r2: Result) => r2.number - r1.number).map((result: Result, i: number) => <tr key={i}>
                   <td>{result.number}</td>
                   <td>{result.tries}</td>
                   <td><pre>{result.result}</pre></td>

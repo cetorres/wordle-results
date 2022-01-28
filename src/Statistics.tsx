@@ -1,18 +1,15 @@
 import React, { useEffect, useState } from "react";
 import { Result } from "./interfaces";
-import { loadFromLocalStorage } from "./Util";
 import { Chart } from "react-google-charts";
-import { firebaseAuth, loadResultsForCurrentUser } from "./Firebase";
-import { useAuthState } from "react-firebase-hooks/auth";
 
 export default function Statistics(props: any) {
+  const { results } = props;
   const [gamesPlayed, setGamesPlayed] = useState('0');
   const [winsPercentage, setWinsPercentage] = useState('0');
   const [numberWins, setNumberWins] = useState('0');
   const [numberLosses, setNumberLosses] = useState('0');
   const [lastDate, setLastDate] = useState('Never');
   const [chartData, setChartData] = useState<any>([]);
-  const [user] = useAuthState(firebaseAuth);
 
   function loadStatistics(savedResults: Array<Result>) {
     const total = savedResults.length;
@@ -21,6 +18,7 @@ export default function Statistics(props: any) {
     if (total === 0) {
       setNumberWins('0');
       setNumberLosses('0');
+      setWinsPercentage('0');
       setLastDate('Never');
       setChartData([]);
       return;
@@ -56,29 +54,9 @@ export default function Statistics(props: any) {
     setChartData(data);
   }
 
-  async function loadResults() {
-    if (user) {
-      const savedResults = await loadResultsForCurrentUser();
-      loadStatistics(savedResults ?? []);
-    }
-    else {
-      const savedResults = loadFromLocalStorage('results');
-      if (savedResults) {
-        loadStatistics(savedResults ?? []);
-      }
-    }
-  }
-
   useEffect(() => {
-    loadResults();
-  }, [user]);
-
-  useEffect(() => {
-    if (props.reloadPage) {
-      props.setReloadPage(false);
-      loadResults();
-    }
-  }, [props.reloadPage]);
+    loadStatistics(results);
+  }, [results]);
   
   return (
     <div className='container'>

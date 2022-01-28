@@ -65,8 +65,8 @@ const signInWithGoogle = async () => {
 };
 
 // Sign out
-const logout = () => {
-  signOut(firebaseAuth);
+const logout = async () => {
+  await signOut(firebaseAuth);
 };
 
 const loadResultsForCurrentUser = async () => {

@@ -1,6 +1,6 @@
 import React from "react";
 
-export default function About(props: any) {
+export default function About() {
   return (
     <div className='container'>
       <div className="mt-5">

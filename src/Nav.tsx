@@ -6,6 +6,7 @@ import { useAuthState } from "react-firebase-hooks/auth";
 import { clearLocaStorage, isIOS, loadFromLocalStorage, saveToLocaStorage } from "./Util";
 
 export default function Nav(props: any) {
+  const { results, loadResults } = props;
   const location = useLocation();
   const [user, loading] = useAuthState(firebaseAuth);
   const [showSignInMsg, setShowSignInMsg] = useState(isIOS() ? false : true);
@@ -19,21 +20,24 @@ export default function Nav(props: any) {
       if (window.confirm('Do you want to save your local saved results in our server, so you can see them anywhere you sign in with your Google account?')) {
         saveResults();
       }
+      else {
+        setShowSaveLocalResults(true);
+      }
     }
   }
 
   async function saveResults() {
     const savedResults = loadFromLocalStorage('results');
-    if (await saveResultsToCurrentUser(savedResults)) {
+    if (await saveResultsToCurrentUser(savedResults.concat(results))) {
       setShowSaveLocalResults(false);
-      props.setReloadPage(true);
+      loadResults();
       clearLocaStorage('results');
     }
     else {
       alert('Could not save local results to your account. Try again later.');
     }
   }
-  
+
   useEffect(() => {
     const navLinks = document.querySelectorAll('.nav-item.d-block.d-sm-none');
     const menuToggle = document.getElementById('navbarNav')!;
@@ -54,10 +58,9 @@ export default function Nav(props: any) {
     }
   }, [user]);
 
-  function signOut() {
-    logout();
+  async function signOut() {
+    await logout();
     clearLocaStorage('askedToSave');
-    props.setReloadPage(true);
   }
 
   return (
