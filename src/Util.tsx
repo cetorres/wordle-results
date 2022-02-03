@@ -36,3 +36,7 @@ export function isIOS() {
 export function isAndroid() {
   return /Android/i.test(navigator.userAgent);
 }
+
+export const capitalize = (text?: string): string | undefined => {
+  return text?.trim().replace(/^\w/, (c) => c.toUpperCase());
+};

@@ -1,5 +1,5 @@
 import React, { useState, useRef } from "react";
-import { exportToJsonFile, importFromJson, isIOS } from "./Util";
+import { capitalize, exportToJsonFile, importFromJson, isIOS } from "./Util";
 import { Modal } from "bootstrap";
 import { Result } from "./interfaces";
 import { firebaseAuth, signInWithGoogle } from "./Firebase";
@@ -34,9 +34,12 @@ export default function Home(props: any) {
       if (newResultText.length <= 0) {
         throw Error('Empty array.');
       }
-      if (newResultText[0].split(' ')[0] !== 'Wordle') {
-        throw Error('Wordle not found.');
+
+      const game = newResultText[0].split(' ')[0].trim().toLowerCase();
+      if (game !== 'wordle' && game !== 'nerdle' && game !== 'nerdlegame') {
+        throw Error('Wordle / Nerdle not found.');
       }
+      
       const number = newResultText[0].split(' ')[1];
       const tries = newResultText[0].split(' ')[2];
       newResultText.shift();
@@ -49,7 +52,8 @@ export default function Home(props: any) {
         result: resultEmojis,
         tries: tries,
         date: date,
-        word: word
+        word: word,
+        game: game
       };
 
       saveResults([...results, newResult]);
@@ -103,7 +107,8 @@ export default function Home(props: any) {
 
   function shareResult(resultToShare: Result) {
     const result = results.filter((res: Result) => res === resultToShare)[0];
-    const shareText = `Wordle ${result.number} ${result.tries}\n\n${result.result}`;
+    const game = result.game ? capitalize(result.game) : 'Wordle';
+    const shareText = `${game} ${result.number} ${result.tries}\n\n${result.result}`;
     navigator.clipboard.writeText(shareText);
     document.execCommand('copy', false, shareText);
     showModal('Share', null, <div>Result copied to the clipboard.<br/><br/><pre>{shareText}</pre></div>);

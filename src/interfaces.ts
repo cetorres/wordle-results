@@ -4,4 +4,5 @@ export interface Result {
   tries: string;
   date: string;
   word: string;
+  game?: string;
 }
