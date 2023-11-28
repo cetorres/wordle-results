@@ -24,8 +24,6 @@ Nerdle 14 4/6
 🟩🟩🟩🟩🟩🟩🟩🟩
 ```
 
-Your results are saved in your browser's local storage, so no account creation or any authentication is needed, just like Wordle does. But you can also import and export the results list to a JSON file for your convinience.
-
 You can also view some useful statistics based on the results data, like the number of games played, wins percentage, and the tries distribution.
 
 This app is not affiliated with Wordle or Nerdle in any form, it's an independent tool created by a fan of those games.
