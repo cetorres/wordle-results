@@ -2,7 +2,7 @@
 
 Wordle Result is a simple app to help you store your Wordle or Nerdle game results history.
 
-Just copy and paste the sharing text from the game, enter the word, and the date. The app can infer more data from the sharing text itself, like game number, tries and the result emojis.
+Just copy and paste the sharing text from the game, enter the word, and the date. The app can infer more data from the sharing text itself, like game number, tries, and the result emojis.
 
 The app is currently deployed to Google Firebase: https://wordle-results.web.app
 
